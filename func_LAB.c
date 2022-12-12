@@ -36,7 +36,11 @@ void readPGMImage(struct pgm *pio, char *filename)
     exit(3);
   }
   fscanf(fp, "%d", &pio->mv);
+#ifdef __linux__
   fseek(fp, 1, SEEK_CUR);
+#elif _WIN32
+  fseek(fp, 0, SEEK_CUR);
+#endif
 
   pio->pData = (unsigned char *)malloc(pio->r * pio->c * sizeof(unsigned char));
 
@@ -60,7 +64,7 @@ void readPGMImage(struct pgm *pio, char *filename)
   fclose(fp);
 }
 
-void writePGMImage(unsigned char *scm, char *filename, int f, int *n)
+void writePGMImage(int *scm, char *filename, int f, int *n)
 {
   FILE *fp;
   char ch;
@@ -71,7 +75,6 @@ void writePGMImage(unsigned char *scm, char *filename, int f, int *n)
     exit(1);
   }
 
-  scm = (int)scm;
   fprintf(fp, "[");
   for (int i = 0; i < f * f; i++)
   {
@@ -97,32 +100,31 @@ void viewPGMImage(struct pgm *pio)
   printf("\n");
 }
 
-void quantizar(unsigned char *pm, int l, int c, int max, int f)
+void quantizar_matriz(unsigned char *Mat, int lin, int col, int max, int taxa)
 {
-  int q = (max + 1) / f;
-  for (int i = 0; i < (l * c); i++)
+  int q = (max + 1) / taxa;
+  for (int i = 0; i < (lin * col); i++)
   {
-    *(pm + i) = (int)(*(pm + i)) / q;
+    *(Mat + i) = (int)(*(Mat + i)) / q;
   }
 }
 
-void scm(unsigned char *p1, unsigned char *p2, unsigned char *s, int l, int c, int f)
+void preencher_mat_scm(unsigned char *Mat1, unsigned char *Mat2, int *Mat_scm, int lin, int col, int niv)
 {
-  int k;
-  for (int i = 0; i < (l * c); i++)
+  for (int i = 0; i < (lin * col); i++)
   {
-    k = (int)*(p1 + i) * f + (*(p2 + i));
-    *(s + k) = (int)*(s + k) + 1;
+    int k = (int)(*(Mat1 + i) * niv + *(Mat2 + i));
+    *(Mat_scm + k) += 1;
   }
 }
 
-void imprimir_scm(unsigned char *p, int x)
+void imprimir_mat_scm(int *Mat, int TAM)
 {
-  for (int i = 0; i < x; i++)
+  for (int i = 0; i < TAM; i++)
   {
-    for (int j = 0; j < x; j++)
+    for (int j = 0; j < TAM; j++)
     {
-      printf("%4d ", *(p + (i * x) + j));
+      printf("%4d ", *(Mat + (i * TAM) + j));
     }
     printf("\n");
   }
