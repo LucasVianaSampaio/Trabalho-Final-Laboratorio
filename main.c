@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     struct dirent *dir;
     struct pgm img;
     struct pgm img2;
-    int c;
+    int rotulo;
 
     int freq = atoi(argv[1]);
 
@@ -26,33 +26,39 @@ int main(int argc, char **argv)
 
         while ((dir = readdir(d)) != NULL)
         {
-            ini = clock();
-            unsigned char *mat_scm = calloc((freq * freq), sizeof(unsigned char));
+            int *mat_scm = calloc((freq * freq), sizeof(int));
             if (!mat_scm)
             {
                 printf("erro de alocacao de memoria!");
                 exit(2);
             }
-            c = (int)(*(dir->d_name + 0));
+            // printf(" ->img1:%s\n", dir->d_name);
+            ini = clock();
+            rotulo = (int)(*(dir->d_name + 0));
             readPGMImage(&img, dir->d_name);
-            quantizar(img.pData, img.c, img.r, img.mv, freq);
+            quantizar_matriz(img.pData, img.c, img.r, img.mv, freq);
 
             dir = readdir(d);
 
+            // printf(" ->img:%s\n", dir->d_name);
             readPGMImage(&img2, dir->d_name);
-            quantizar(img2.pData, img2.c, img2.r, img2.mv, freq);
+            quantizar_matriz(img2.pData, img2.c, img2.r, img2.mv, freq);
 
-            scm(img.pData, img2.pData, mat_scm, img.c, img.r, freq);
+            preencher_mat_scm(img.pData, img2.pData, mat_scm, img.c, img.r, freq);
 
-            writePGMImage(mat_scm, argv[2], freq, &c);
-            cont += 2;
+            // imprimir_mat_scm(mat_scm, freq);
+            writePGMImage(mat_scm, argv[2], freq, &rotulo);
+            cont += 1;
+            // printf("________________________________________________\n");
+
             free(mat_scm);
             fim = clock();
-            soma = (float)(fim - ini) / CLOCKS_PER_SEC;
+            soma += (float)(fim - ini) / CLOCKS_PER_SEC;
         }
         closedir(d);
     }
-    printf("Tempo medio por imagem: %f\n", soma / cont);
+    // printf("Tempo medio por imagem: %f\n", soma / cont);
     printf("Tempo total: %f", soma);
-    return (0);
+
+    return 0;
 }
