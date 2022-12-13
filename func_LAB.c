@@ -1,5 +1,4 @@
 #include "func_LAB.h"
-
 void readPGMImage(struct pgm *pio, char *filename)
 {
   char path[50] = {"images/"};
@@ -64,10 +63,9 @@ void readPGMImage(struct pgm *pio, char *filename)
   fclose(fp);
 }
 
-void writePGMImage(int *scm, char *filename, int f, int *n)
+void writePGMImage(int *m_scm, char *filename, int nivel, int *rotulo)
 {
   FILE *fp;
-  char ch;
 
   if (!(fp = fopen(filename, "ab")))
   {
@@ -76,12 +74,12 @@ void writePGMImage(int *scm, char *filename, int f, int *n)
   }
 
   fprintf(fp, "[");
-  for (int i = 0; i < f * f; i++)
+  for (int i = 0; i < nivel * nivel; i++)
   {
-    fprintf(fp, "%d,", *(scm + i));
+    fprintf(fp, "%d, ", *(m_scm + i));
   }
   fprintf(fp, "]");
-  fprintf(fp, " ->%d\n\n", (*n) - 48);
+  fprintf(fp, " ->%d\n\n", (*rotulo) - 48);
   fclose(fp);
 }
 

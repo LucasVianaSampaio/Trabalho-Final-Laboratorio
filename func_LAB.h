@@ -15,7 +15,7 @@ struct pgm
 
 void readPGMImage(struct pgm *, char *);
 void viewPGMImage(struct pgm *);
-void writePGMImage(int *scm, char *filename, int f, int *n);
-void quantizar_matriz(unsigned char *Mat, int lin, int col, int max, int taxa);
-void preencher_mat_scm(unsigned char *Mat1, unsigned char *Mat2, int *Mat_scm, int lin, int col, int niv);
-void imprimir_mat_scm(int *Mat, int TAM);
+void writePGMImage(int *, char *, int, int *);
+void quantizar_matriz(unsigned char *, int, int, int, int);
+void preencher_mat_scm(unsigned char *, unsigned char *, int *, int, int, int);
+void imprimir_mat_scm(int *, int);
