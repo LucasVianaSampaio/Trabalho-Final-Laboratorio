@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 
         while ((dir = readdir(d)) != NULL)
         {
+            ini = clock();
             int *mat_scm = calloc((freq * freq), sizeof(int));
             if (!mat_scm)
             {
@@ -33,7 +34,7 @@ int main(int argc, char **argv)
                 exit(2);
             }
             // printf(" ->img1:%s\n", dir->d_name);
-            ini = clock();
+
             rotulo = (int)(*(dir->d_name + 0));
             readPGMImage(&img, dir->d_name);
             quantizar_matriz(img.pData, img.c, img.r, img.mv, freq);
